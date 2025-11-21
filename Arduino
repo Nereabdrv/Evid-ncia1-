@@ -1,0 +1,19 @@
+#define FAN_PIN 9
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(FAN_PIN, OUTPUT);
+}
+
+void loop() {
+  if (Serial.available()) {
+    String data = Serial.readStringUntil('\n');
+
+    if (data.startsWith("FAN:")) {
+      int velocidad = data.substring(4).toInt();
+      velocidad = constrain(velocidad, 0, 255);
+      analogWrite(FAN_PIN, velocidad);
+    }
+  }
+}
+
