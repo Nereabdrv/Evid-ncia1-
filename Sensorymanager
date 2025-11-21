@@ -1,0 +1,55 @@
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+
+public class SensoryManager : MonoBehaviour
+{
+    [Header("Luz")]
+    public Light luz;
+    public float intensidadMax = 2f;
+    public float velocidadLuz = 1f;
+
+    [Header("Sonido")]
+    public AudioSource audioAmbiental;
+
+    [Header("Vibración")]
+    public ActionBasedController controller;
+    public float intensidadVibracion = 0.5f;
+    public float duracionVibracion = 0.5f;
+
+    [Header("Viento Opcional")]
+    public bool usarViento = false;
+    public int potenciaViento = 150;
+    FanSerial fan;
+
+    void Start()
+    {
+        // SONIDO
+        if (audioAmbiental != null)
+        {
+            audioAmbiental.loop = true;
+            audioAmbiental.Play();
+        }
+
+        // VIBRACIÓN
+        if (controller != null)
+        {
+            controller.SendHapticImpulse(intensidadVibracion, duracionVibracion);
+        }
+
+        // Buscar enlace al ventilador
+        fan = GetComponent<FanSerial>();
+        if (usarViento && fan != null)
+        {
+            fan.ActivarViento(potenciaViento);
+        }
+    }
+
+    void Update()
+    {
+        // LUZ DINÁMICA
+        if (luz != null)
+        {
+            luz.intensity = Mathf.PingPong(Time.time * velocidadLuz, intensidadMax);
+        }
+    }
+}
